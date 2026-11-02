@@ -1,0 +1,196 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-arcade: #0A0A14;
+    --bg-cabinet: #14111F;
+    --bg-crt: #05070D;
+    --neon-purple: #A855F7;
+    --neon-green: #39FF88;
+    --neon-cyan: #38BDF8;
+    --neon-yellow: #FFE93B;
+    --text-main: #E9E6D8;
+    --text-muted: #8B93A7;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #0A0A14;
+    color: #E9E6D8;
+    overflow-x: hidden;
+  }
+}
+
+/* Pixel & Retro Typography Helpers (ONLY for labels, marquee, badges, never paragraphs) */
+.font-pixel {
+  font-family: 'Press Start 2P', monospace;
+  letter-spacing: 0.04em;
+}
+
+.font-vt323 {
+  font-family: 'VT323', monospace;
+}
+
+.pixelated {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Marquee subtle 2s pulse */
+@keyframes marqueePulse {
+  0%, 100% {
+    filter: brightness(1) drop-shadow(0 0 12px rgba(168, 85, 247, 0.45));
+  }
+  50% {
+    filter: brightness(1.12) drop-shadow(0 0 22px rgba(56, 189, 248, 0.65));
+  }
+}
+
+.animate-marquee-pulse {
+  animation: marqueePulse 2.4s ease-in-out infinite;
+}
+
+/* Blinking PRESS START / CREDIT steps(1) */
+@keyframes arcadeBlink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0.15;
+  }
+}
+
+.animate-arcade-blink {
+  animation: arcadeBlink 1.1s steps(1, end) infinite;
+}
+
+/* Attract Mode Ticker */
+@keyframes tickerScroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-ticker {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: tickerScroll 22s linear infinite;
+}
+
+/* CRT Coin Flash (0.5s) */
+@keyframes crtCoinFlash {
+  0% {
+    filter: brightness(1) contrast(1);
+  }
+  20% {
+    filter: brightness(1.85) contrast(1.25) hue-rotate(15deg);
+  }
+  45% {
+    filter: brightness(0.92) contrast(1.1);
+  }
+  70% {
+    filter: brightness(1.35);
+  }
+  100% {
+    filter: brightness(1) contrast(1);
+  }
+}
+
+.animate-crt-flash {
+  animation: crtCoinFlash 0.5s ease-out;
+}
+
+/* Joystick Hover Wobble */
+@keyframes joystickWobble {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-10deg);
+  }
+  75% {
+    transform: rotate(10deg);
+  }
+}
+
+.joystick-stick:hover {
+  animation: joystickWobble 0.45s ease-in-out;
+}
+
+/* CRT Screen Scanlines & Vignette */
+.crt-scanlines {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0px,
+    rgba(255, 255, 255, 0) 2px,
+    rgba(255, 255, 255, 0.03) 3px,
+    rgba(0, 0, 0, 0.22) 4px
+  );
+}
+
+.crt-vignette {
+  box-shadow:
+    inset 0 0 60px rgba(0, 0, 0, 0.85),
+    inset 0 0 18px rgba(56, 189, 248, 0.08),
+    inset 3px 0 8px rgba(255, 0, 85, 0.07),
+    inset -3px 0 8px rgba(0, 225, 255, 0.07);
+}
+
+/* Menu Tile 3D Screen Tilt on Hover */
+.arcade-tile {
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease, border-color 0.22s ease, background-color 0.22s ease;
+  transform-style: preserve-3d;
+}
+
+.arcade-tile:hover,
+.arcade-tile:focus-visible {
+  transform: perspective(700px) rotateX(4deg) translateY(-3px);
+}
+
+/* Accessible Neon Focus Ring */
+button:focus-visible,
+a:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid #39FF88;
+  outline-offset: 3px;
+  box-shadow: 0 0 14px rgba(57, 255, 136, 0.65);
+}
+
+/* Honor prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .arcade-tile:hover,
+  .arcade-tile:focus-visible {
+    transform: none !important;
+  }
+}
+
+/* Custom Scrollbar inside CRT & Page */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #05070D;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #231D36;
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #A855F7;
+}
