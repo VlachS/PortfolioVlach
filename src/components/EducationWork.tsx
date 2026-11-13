@@ -10,7 +10,8 @@ import {
   Package,
   Coins,
   Play,
-  Minimize2
+  Minimize2,
+  Video
 } from 'lucide-react';
 import { StorioMascot } from './StorioMascot';
 import { RestorioSortingGame } from './RestorioSortingGame';
@@ -286,6 +287,44 @@ export const EducationWork: React.FC<EducationWorkProps> = ({ onInsertCoin }) =>
                   Okamžité posouzení každé knihy: vyhovující naskladnit, vadné vyřadit.
                 </p>
               </div>
+            </div>
+          </div>
+
+          {/* =================================================================
+              Z POHLEDU ZÁKAZNÍKA — 3 VIDEA
+             ================================================================= */}
+          <div className="mt-8 rounded-2xl bg-[#0D101D]/90 border border-[#38BDF8]/50 p-6 sm:p-7 shadow-[0_0_28px_rgba(56,189,248,0.12)]">
+            <div className="mb-5">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#38BDF8]/15 border border-[#38BDF8]/50 text-[#38BDF8] font-pixel text-[9px] mb-3">
+                <Video className="w-3.5 h-3.5" />
+                <span>VIDEA</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-[#E9E6D8]">Z pohledu zákazníka</h3>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[
+                { title: 'Návod a doprava', src: '/videos/navod-a-doprava.mp4' },
+                { title: 'Dokončení objednávky', src: '/videos/dokonceni-objednavky.mp4' },
+                { title: 'Zákaznický účet', src: '/videos/zakaznicky-ucet.mp4' }
+              ].map((video) => (
+                <div
+                  key={video.src}
+                  className="rounded-xl bg-[#05070D] border border-[#38BDF8]/30 overflow-hidden flex flex-col"
+                >
+                  <video
+                    src={video.src}
+                    controls
+                    preload="metadata"
+                    playsInline
+                    className="w-full aspect-video bg-black"
+                    aria-label={video.title}
+                  />
+                  <div className="px-3.5 py-3 border-t border-[#38BDF8]/20">
+                    <span className="text-sm font-semibold text-[#E9E6D8]">{video.title}</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
