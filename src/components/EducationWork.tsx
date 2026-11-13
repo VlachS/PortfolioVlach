@@ -304,9 +304,9 @@ export const EducationWork: React.FC<EducationWorkProps> = ({ onInsertCoin }) =>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {[
-                { title: 'Návod a doprava', src: '/videos/navod-a-doprava.mp4' },
-                { title: 'Dokončení objednávky', src: '/videos/dokonceni-objednavky.mp4' },
-                { title: 'Zákaznický účet', src: '/videos/zakaznicky-ucet.mp4' }
+                { title: 'Návod a doprava', src: `${import.meta.env.BASE_URL}videos/navod-a-doprava.mp4` },
+                { title: 'Dokončení objednávky', src: `${import.meta.env.BASE_URL}videos/dokonceni-objednavky.mp4` },
+                { title: 'Zákaznický účet', src: `${import.meta.env.BASE_URL}videos/zakaznicky-ucet.mp4` }
               ].map((video) => (
                 <div
                   key={video.src}

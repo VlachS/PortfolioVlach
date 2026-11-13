@@ -5,6 +5,8 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
+    // Relativní cesty: web funguje na localhostu i na GitHub Pages (https://vlachs.github.io/PortfolioVlach/)
+    base: './',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
