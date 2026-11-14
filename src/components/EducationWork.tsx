@@ -293,7 +293,7 @@ export const EducationWork: React.FC<EducationWorkProps> = ({ onInsertCoin }) =>
           {/* =================================================================
               Z POHLEDU ZÁKAZNÍKA — 3 VIDEA
              ================================================================= */}
-          <div className="mt-8 rounded-2xl bg-[#0D101D]/90 border border-[#38BDF8]/50 p-6 sm:p-7 shadow-[0_0_28px_rgba(56,189,248,0.12)]">
+          <div id="videa" className="mt-8 scroll-mt-6 rounded-2xl bg-[#0D101D]/90 border border-[#38BDF8]/50 p-6 sm:p-7 shadow-[0_0_28px_rgba(56,189,248,0.12)]">
             <div className="mb-5">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#38BDF8]/15 border border-[#38BDF8]/50 text-[#38BDF8] font-pixel text-[9px] mb-3">
                 <Video className="w-3.5 h-3.5" />

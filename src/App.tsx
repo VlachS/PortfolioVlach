@@ -169,15 +169,18 @@ export default function App() {
       } else if (e.key === 'Enter' && target?.tagName !== 'BUTTON' && target?.tagName !== 'A') {
         e.preventDefault();
         handleNavigate('hry');
+      } else if (key === 'v') {
+        e.preventDefault();
+        handleNavigate('videa');
       } else if (e.key === 'Escape') {
         e.preventDefault();
-        handleNavigate('kontakt');
+        handleBackToTop();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleNavigate, isAttractMode]);
+  }, [handleNavigate, handleBackToTop, isAttractMode]);
 
   // 30-second Idle Timer for Attract Mode
   useEffect(() => {
@@ -303,7 +306,7 @@ export default function App() {
                 { id: 'prace' as ArcadeSectionId, label: 'PRÁCE', key: 'C', color: 'hover:border-[#A855F7] text-[#D8B4FE]' },
                 { id: 'zajmy' as ArcadeSectionId, label: 'ZÁJMY', key: 'D', color: 'hover:border-[#38BDF8] text-[#38BDF8]' },
                 { id: 'hry' as ArcadeSectionId, label: 'HRY ×2', key: 'ENTER', color: 'hover:border-[#39FF88] text-[#39FF88]' },
-                { id: 'kontakt' as ArcadeSectionId, label: 'KONTAKT', key: 'ESC', color: 'hover:border-[#A855F7] text-[#D8B4FE]' }
+                { id: 'videa' as ArcadeSectionId, label: 'VIDEA', key: 'V', color: 'hover:border-[#A855F7] text-[#D8B4FE]' }
               ].map((item) => (
                 <button
                   key={item.id}
@@ -365,12 +368,8 @@ export default function App() {
                   {/* [ENTER] HRY ×2 (Cartridges with INSERT COIN) */}
                   <ArcadeGamesSection onInsertCoin={handleInsertCoin} />
 
-                  {/* [ESC] KONTAKT & FOOTER */}
-                  <Footer
-                    credits={credits}
-                    onInsertCoin={handleInsertCoin}
-                    onBackToTop={handleBackToTop}
-                  />
+                  {/* FOOTER */}
+                  <Footer onBackToTop={handleBackToTop} />
                 </div>
               </main>
             </div>

@@ -192,10 +192,10 @@ export const Hero: React.FC<HeroProps> = ({
       icon: <PixelArcadeGameIcon />
     },
     {
-      id: 'kontakt',
-      label: 'KONTAKT',
-      subtitle: 'E-mail · GitHub · Restorio · Credits',
-      keyBind: 'ESC',
+      id: 'videa',
+      label: 'VIDEA',
+      subtitle: 'Z pohledu zákazníka · 3 videa z Restoria',
+      keyBind: 'V',
       borderStyle:
         'border-[#A855F7]/75 bg-gradient-to-b from-[#1E1233]/70 to-[#0D0918]/90 shadow-[0_0_22px_rgba(168,85,247,0.24),inset_0_0_16px_rgba(168,85,247,0.12)] hover:border-[#A855F7] hover:shadow-[0_0_34px_rgba(168,85,247,0.55),inset_0_0_22px_rgba(168,85,247,0.22)]',
       labelColor: 'text-[#A855F7] drop-shadow-[0_0_8px_rgba(168,85,247,0.65)]',

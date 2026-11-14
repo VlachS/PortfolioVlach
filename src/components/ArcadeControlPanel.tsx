@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export type ArcadeSectionId = 'o-mne' | 'skola' | 'prace' | 'zajmy' | 'hry' | 'kontakt';
+export type ArcadeSectionId = 'o-mne' | 'skola' | 'prace' | 'zajmy' | 'hry' | 'videa';
 
 interface ArcadeControlPanelProps {
   activeSection: ArcadeSectionId | null;
@@ -126,7 +126,7 @@ export const ArcadeControlPanel: React.FC<ArcadeControlPanelProps> = ({
               <p className="text-xs text-[#8B93A7] mt-1 max-w-[180px] leading-snug">
                 Stiskni tlačítka <strong className="text-[#E9E6D8]">A / B / C / D</strong>,{' '}
                 <strong className="text-[#39FF88]">ENTER</strong> nebo{' '}
-                <strong className="text-[#FFE93B]">ESC</strong> i na klávesnici.
+                <strong className="text-[#FFE93B]">V</strong> i na klávesnici.
               </p>
             </div>
           </div>
@@ -171,12 +171,12 @@ export const ArcadeControlPanel: React.FC<ArcadeControlPanelProps> = ({
 
             <button
               type="button"
-              onClick={() => onNavigate('kontakt')}
-              aria-label="Přejít na sekci Kontakt (klávesa ESC)"
+              onClick={() => onNavigate('videa')}
+              aria-label="Přejít na videa Z pohledu zákazníka (klávesa V)"
               className="px-3.5 py-2.5 rounded-xl bg-[#A855F7]/15 hover:bg-[#A855F7]/25 border-2 border-[#A855F7] text-[#A855F7] font-pixel text-[9px] sm:text-[10px] shadow-[0_0_15px_rgba(168,85,247,0.35)] active:scale-95 transition-all cursor-pointer flex flex-col items-center gap-1"
             >
-              <span>KONTAKT</span>
-              <span className="text-[7px] text-[#E9E6D8] opacity-80">[ESC]</span>
+              <span>VIDEA</span>
+              <span className="text-[7px] text-[#E9E6D8] opacity-80">[V]</span>
             </button>
           </div>
         </div>
