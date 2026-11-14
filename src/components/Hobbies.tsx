@@ -10,15 +10,10 @@ import {
   Star,
   Quote,
   Zap,
-  Upload,
-  ImagePlus,
-  X,
   Mic,
   Disc3,
   Radio,
-  Headphones,
-  Pencil,
-  Check
+  Headphones
 } from 'lucide-react';
 
 interface Book {
@@ -218,169 +213,10 @@ const DEFAULT_MUSICIAN_PHOTOS: Record<string, string> = {
 export const Hobbies: React.FC = () => {
   const [activeBook, setActiveBook] = useState<Book>(BOOKS[0]);
   const [activeSubTab, setActiveSubTab] = useState<'all' | 'apps' | 'music' | 'books' | 'comics'>('all');
-  
-  // Book covers stored in localStorage or state (with hardcoded defaults)
-  const [bookCovers, setBookCovers] = useState<Record<string, string>>(() => {
-    const saved: Record<string, string> = { ...DEFAULT_BOOK_COVERS };
-    BOOKS.forEach(b => {
-      const stored = localStorage.getItem(`simon_book_cover_${b.id}`);
-      if (stored) saved[b.id] = stored;
-    });
-    return saved;
-  });
 
-  // Album covers stored in localStorage or state (with hardcoded defaults)
-  const [albumCovers, setAlbumCovers] = useState<Record<string, string>>(() => {
-    const saved: Record<string, string> = { ...DEFAULT_ALBUM_COVERS };
-    ALBUMS.forEach(a => {
-      const stored = localStorage.getItem(`simon_album_cover_${a.id}`);
-      if (stored) saved[a.id] = stored;
-    });
-    return saved;
-  });
-
-  // Musician photos stored in localStorage or state (with hardcoded defaults)
-  const [musicianPhotos, setMusicianPhotos] = useState<Record<string, string>>(() => {
-    const saved: Record<string, string> = { ...DEFAULT_MUSICIAN_PHOTOS };
-    MUSICIANS.forEach(m => {
-      let stored = localStorage.getItem(`simon_musician_photo_${m.id}`);
-      if (!stored && m.id === 'griff') {
-        stored = localStorage.getItem('simon_musician_photo_musician_2');
-      }
-      if (!stored && m.id === 'raye') {
-        stored = localStorage.getItem('simon_musician_photo_raye') || localStorage.getItem('simon_musician_photo_musician_3');
-      }
-      if (stored) saved[m.id] = stored;
-    });
-    return saved;
-  });
-
-  // Custom musician names state if user wants to change labels
-  const [musicianNames, setMusicianNames] = useState<Record<string, string>>(() => {
-    const saved: Record<string, string> = {};
-    MUSICIANS.forEach(m => {
-      const stored = localStorage.getItem(`simon_musician_name_${m.id}`);
-      if (stored) saved[m.id] = stored;
-    });
-    return saved;
-  });
-
-  // Custom musician quotes state if user wants to customize their favorite lyrics
-  const [musicianQuotes, setMusicianQuotes] = useState<Record<string, string>>(() => {
-    const saved: Record<string, string> = {};
-    MUSICIANS.forEach(m => {
-      const stored = localStorage.getItem(`simon_musician_quote_${m.id}`);
-      // Discard any previously stored incorrect quotes so verified lyrics load
-      if (stored && !stored.includes('feels the vertigo') && !stored.includes('hudba jako uzdravení') && !stored.includes('let there be light')) {
-        saved[m.id] = stored;
-      }
-    });
-    return saved;
-  });
-
-  const [editingQuoteId, setEditingQuoteId] = useState<string | null>(null);
-  const [tempQuoteText, setTempQuoteText] = useState<string>('');
-
-  const handleStartEditQuote = (musicianId: string, currentQuote: string) => {
-    setEditingQuoteId(musicianId);
-    setTempQuoteText(musicianQuotes[musicianId] || currentQuote || '');
-  };
-
-  const handleSaveQuote = (musicianId: string) => {
-    const trimmed = tempQuoteText.trim();
-    if (trimmed) {
-      setMusicianQuotes(prev => ({ ...prev, [musicianId]: trimmed }));
-      localStorage.setItem(`simon_musician_quote_${musicianId}`, trimmed);
-    }
-    setEditingQuoteId(null);
-  };
-
-  const handleResetQuote = (musicianId: string) => {
-    setMusicianQuotes(prev => {
-      const next = { ...prev };
-      delete next[musicianId];
-      return next;
-    });
-    localStorage.removeItem(`simon_musician_quote_${musicianId}`);
-    setEditingQuoteId(null);
-  };
-
-  // Custom album quotes/lyrics state
-  const [albumQuotes, setAlbumQuotes] = useState<Record<string, string>>(() => {
-    const saved: Record<string, string> = {};
-    ALBUMS.forEach(a => {
-      const stored = localStorage.getItem(`simon_album_quote_${a.id}`);
-      // Discard any previously stored quotes with Genesis or outdated text so new quote loads
-      if (stored && !stored.includes('let there be light') && !stored.includes('Genesis') && !stored.includes('Nádherná óda')) {
-        saved[a.id] = stored;
-      }
-    });
-    return saved;
-  });
-
-  const [editingAlbumQuoteId, setEditingAlbumQuoteId] = useState<string | null>(null);
-  const [tempAlbumQuoteText, setTempAlbumQuoteText] = useState<string>('');
-
-  const handleStartEditAlbumQuote = (albumId: string, currentQuote: string) => {
-    setEditingAlbumQuoteId(albumId);
-    setTempAlbumQuoteText(albumQuotes[albumId] || currentQuote || '');
-  };
-
-  const handleSaveAlbumQuote = (albumId: string) => {
-    const trimmed = tempAlbumQuoteText.trim();
-    if (trimmed) {
-      setAlbumQuotes(prev => ({ ...prev, [albumId]: trimmed }));
-      localStorage.setItem(`simon_album_quote_${albumId}`, trimmed);
-    }
-    setEditingAlbumQuoteId(null);
-  };
-
-  const handleResetAlbumQuote = (albumId: string) => {
-    setAlbumQuotes(prev => {
-      const next = { ...prev };
-      delete next[albumId];
-      return next;
-    });
-    localStorage.removeItem(`simon_album_quote_${albumId}`);
-    setEditingAlbumQuoteId(null);
-  };
-
-  // Custom album descriptions state
-  const [albumDescriptions, setAlbumDescriptions] = useState<Record<string, string>>(() => {
-    const saved: Record<string, string> = {};
-    ALBUMS.forEach(a => {
-      const stored = localStorage.getItem(`simon_album_desc_${a.id}`);
-      if (stored) saved[a.id] = stored;
-    });
-    return saved;
-  });
-
-  const [editingAlbumDescId, setEditingAlbumDescId] = useState<string | null>(null);
-  const [tempAlbumDescText, setTempAlbumDescText] = useState<string>('');
-
-  const handleStartEditAlbumDesc = (albumId: string, currentDesc: string) => {
-    setEditingAlbumDescId(albumId);
-    setTempAlbumDescText(albumDescriptions[albumId] || currentDesc || '');
-  };
-
-  const handleSaveAlbumDesc = (albumId: string) => {
-    const trimmed = tempAlbumDescText.trim();
-    if (trimmed) {
-      setAlbumDescriptions(prev => ({ ...prev, [albumId]: trimmed }));
-      localStorage.setItem(`simon_album_desc_${albumId}`, trimmed);
-    }
-    setEditingAlbumDescId(null);
-  };
-
-  const handleResetAlbumDesc = (albumId: string) => {
-    setAlbumDescriptions(prev => {
-      const next = { ...prev };
-      delete next[albumId];
-      return next;
-    });
-    localStorage.removeItem(`simon_album_desc_${albumId}`);
-    setEditingAlbumDescId(null);
-  };
+  const bookCovers = DEFAULT_BOOK_COVERS;
+  const albumCovers = DEFAULT_ALBUM_COVERS;
+  const musicianPhotos = DEFAULT_MUSICIAN_PHOTOS;
 
   // Marvel Lightning Storm Effect state (triggers on hover for a brief moment)
   const [isMarvelLightningActive, setIsMarvelLightningActive] = useState(false);
@@ -444,105 +280,6 @@ export const Hobbies: React.FC = () => {
       if (dcRavenTimeoutRef.current) clearTimeout(dcRavenTimeoutRef.current);
     };
   }, []);
-
-  const bookFileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
-  const musicianFileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
-  const albumFileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
-
-  const handleAlbumCoverUpload = (e: React.ChangeEvent<HTMLInputElement>, albumId: string) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      setAlbumCovers(prev => ({ ...prev, [albumId]: result }));
-      localStorage.setItem(`simon_album_cover_${albumId}`, result);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleRemoveAlbumCover = (albumId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setAlbumCovers(prev => {
-      const next = { ...prev };
-      if (DEFAULT_ALBUM_COVERS[albumId]) {
-        next[albumId] = DEFAULT_ALBUM_COVERS[albumId];
-      } else {
-        delete next[albumId];
-      }
-      return next;
-    });
-    localStorage.removeItem(`simon_album_cover_${albumId}`);
-    if (albumFileInputRefs.current[albumId]) {
-      albumFileInputRefs.current[albumId]!.value = '';
-    }
-  };
-
-  const handleBookCoverUpload = (e: React.ChangeEvent<HTMLInputElement>, bookId: string) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      setBookCovers(prev => ({ ...prev, [bookId]: result }));
-      localStorage.setItem(`simon_book_cover_${bookId}`, result);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleRemoveBookCover = (bookId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setBookCovers(prev => {
-      const next = { ...prev };
-      if (DEFAULT_BOOK_COVERS[bookId]) {
-        next[bookId] = DEFAULT_BOOK_COVERS[bookId];
-      } else {
-        delete next[bookId];
-      }
-      return next;
-    });
-    localStorage.removeItem(`simon_book_cover_${bookId}`);
-    if (bookFileInputRefs.current[bookId]) {
-      bookFileInputRefs.current[bookId]!.value = '';
-    }
-  };
-
-  const handleMusicianPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>, musicianId: string) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      setMusicianPhotos(prev => ({ ...prev, [musicianId]: result }));
-      localStorage.setItem(`simon_musician_photo_${musicianId}`, result);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleRemoveMusicianPhoto = (musicianId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setMusicianPhotos(prev => {
-      const next = { ...prev };
-      if (DEFAULT_MUSICIAN_PHOTOS[musicianId]) {
-        next[musicianId] = DEFAULT_MUSICIAN_PHOTOS[musicianId];
-      } else {
-        delete next[musicianId];
-      }
-      return next;
-    });
-    localStorage.removeItem(`simon_musician_photo_${musicianId}`);
-    if (musicianFileInputRefs.current[musicianId]) {
-      musicianFileInputRefs.current[musicianId]!.value = '';
-    }
-  };
-
-  const handleMusicianNameChange = (musicianId: string, newName: string) => {
-    setMusicianNames(prev => ({ ...prev, [musicianId]: newName }));
-    localStorage.setItem(`simon_musician_name_${musicianId}`, newName);
-  };
 
   return (
     <section id="zajmy" className="relative py-14 sm:py-16 bg-transparent text-[#E9E6D8] overflow-hidden border-t border-b border-[#A855F7]/20">
@@ -930,7 +667,7 @@ export const Hobbies: React.FC = () => {
 
           </div>
 
-          {/* PODBLOK 1: TOP 3 HUDEBNÍCI (S PLNÝMI INFORMACEMI A MÍSTY NA FOTKY) */}
+          {/* PODBLOK 1: TOP 3 HUDEBNÍCI */}
           <div className="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 sm:p-8 mb-10">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
               <div className="flex items-center gap-2.5">
@@ -945,21 +682,15 @@ export const Hobbies: React.FC = () => {
                     </span>
                   </h4>
                   <p className="text-xs sm:text-sm text-slate-400">
-                    Taylor Swift, Griff a RAYE – s volnými místy pro tvé fotky a texty písní
+                    Taylor Swift, Griff a RAYE – umělci, kteří mě provázejí každý den
                   </p>
                 </div>
-              </div>
-              <div className="inline-flex items-center gap-2 text-xs text-amber-300/90 bg-amber-500/10 border border-amber-500/30 px-3 py-1.5 rounded-xl">
-                <ImagePlus className="w-3.5 h-3.5" />
-                <span>Kliknutím na rámeček nahraješ fotku</span>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {MUSICIANS.map((musician) => {
                 const photo = musicianPhotos[musician.id];
-                const displayName = musicianNames[musician.id] || musician.name;
-                const currentQuote = musicianQuotes[musician.id] || musician.quote;
                 const isFirst = musician.rank === 1;
                 const isSecond = musician.rank === 2;
 
@@ -974,15 +705,6 @@ export const Hobbies: React.FC = () => {
                           : 'bg-gradient-to-b from-amber-950/30 via-slate-900/90 to-slate-950 border-amber-500/30 shadow-lg shadow-amber-950/20'
                     }`}
                   >
-                    {/* Hidden file input */}
-                    <input
-                      ref={el => { musicianFileInputRefs.current[musician.id] = el; }}
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => handleMusicianPhotoUpload(e, musician.id)}
-                    />
-
                     <div>
                       {/* Top Rank Badge */}
                       <div className="flex items-center justify-between mb-4">
@@ -998,51 +720,22 @@ export const Hobbies: React.FC = () => {
                           }`} />
                           {musician.rank}. místo • {isFirst ? 'Zlato' : isSecond ? 'Stříbro' : 'Bronz'}
                         </span>
-                        
-                        {photo && (
-                          <button
-                            onClick={(e) => handleRemoveMusicianPhoto(musician.id, e)}
-                            className="p-1 rounded-full bg-red-500/20 text-red-300 hover:bg-red-500/40 border border-red-500/30 transition-colors"
-                            title="Odebrat fotku"
-                          >
-                            <X className="w-3.5 h-3.5" />
-                          </button>
-                        )}
                       </div>
 
-                      {/* Photo slot / Upload trigger area */}
-                      <div
-                        onClick={() => musicianFileInputRefs.current[musician.id]?.click()}
-                        className="cursor-pointer relative aspect-square w-full rounded-2xl overflow-hidden mb-4 border-2 border-dashed border-slate-700 hover:border-amber-400/60 transition-all flex items-center justify-center bg-slate-950/70 group/slot shadow-inner"
-                      >
-                        {photo ? (
-                          <>
-                            <img
-                              src={photo}
-                              alt={displayName}
-                              className="w-full h-full object-cover group-hover/slot:scale-105 transition-transform duration-300"
-                            />
-                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover/slot:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-xs text-white font-medium backdrop-blur-xs">
-                              <Upload className="w-4 h-4" />
-                              Změnit fotku
-                            </div>
-                          </>
-                        ) : (
-                          <div className="p-4 text-center flex flex-col items-center justify-center text-slate-400 group-hover/slot:text-amber-300 transition-colors">
-                            <div className="w-14 h-14 rounded-full bg-slate-900/90 flex items-center justify-center mb-2.5 border border-slate-700/80 group-hover/slot:border-amber-500/50 group-hover/slot:scale-105 transition-all">
-                              <ImagePlus className="w-6 h-6 text-slate-300 group-hover/slot:text-amber-300" />
-                            </div>
-                            <span className="text-xs font-semibold text-slate-200 block">Vložit fotku interpreta</span>
-                            <span className="text-[10px] text-slate-400 block mt-0.5">Klikni pro výběr souboru</span>
-                          </div>
-                        )}
+                      {/* Photo frame */}
+                      <div className="relative aspect-square w-full rounded-2xl overflow-hidden mb-4 border border-slate-700/80 flex items-center justify-center bg-slate-950/70 shadow-inner">
+                        <img
+                          src={photo}
+                          alt={musician.name}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
 
-                      {/* Name input / heading */}
+                      {/* Name heading */}
                       <div className="mb-2">
                         <div className="flex items-center justify-between">
                           <h5 className="font-extrabold text-white text-lg tracking-wide">
-                            {displayName}
+                            {musician.name}
                           </h5>
                           <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-slate-300 border border-white/10 font-mono">
                             {musician.genre}
@@ -1059,62 +752,10 @@ export const Hobbies: React.FC = () => {
                         <span className="truncate">{musician.topWork}</span>
                       </div>
 
-                      {/* Quote / Lyric with inline edit & real lyrics */}
-                      {editingQuoteId === musician.id ? (
-                        <div className="mb-3 p-3 rounded-xl bg-black/80 border border-amber-500/50 text-xs shadow-lg">
-                          <label className="block text-[10px] text-amber-300 mb-1.5 font-bold uppercase tracking-wider flex items-center justify-between">
-                            <span>Upravit úryvek písně:</span>
-                            <span className="text-[9px] text-slate-400 font-normal">Pravé lyrics</span>
-                          </label>
-                          <textarea
-                            value={tempQuoteText}
-                            onChange={(e) => setTempQuoteText(e.target.value)}
-                            rows={3}
-                            className="w-full bg-slate-950/90 border border-slate-700 rounded-lg p-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 font-serif italic"
-                            placeholder="Napiš úryvek textu písně..."
-                          />
-                          <div className="flex items-center justify-between mt-2.5 pt-2 border-t border-slate-800">
-                            <button
-                              type="button"
-                              onClick={() => handleResetQuote(musician.id)}
-                              className="text-[10px] text-slate-400 hover:text-rose-400 transition-colors underline cursor-pointer"
-                            >
-                              Obnovit původní
-                            </button>
-                            <div className="flex items-center gap-1.5">
-                              <button
-                                type="button"
-                                onClick={() => setEditingQuoteId(null)}
-                                className="px-2.5 py-1 rounded-md text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 cursor-pointer"
-                              >
-                                Zrušit
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => handleSaveQuote(musician.id)}
-                                className="px-3 py-1 rounded-md text-[11px] bg-amber-500 hover:bg-amber-400 text-black font-bold flex items-center gap-1 cursor-pointer shadow-sm"
-                              >
-                                <Check className="w-3.5 h-3.5" />
-                                Uložit
-                              </button>
-                            </div>
-                          </div>
+                      {musician.quote && (
+                        <div className="mb-3 p-2.5 sm:p-3 rounded-xl bg-white/[0.03] border border-white/10 text-[11px] italic font-serif text-slate-200 leading-relaxed">
+                          <p>{musician.quote}</p>
                         </div>
-                      ) : (
-                        currentQuote && (
-                          <div className="mb-3 p-2.5 sm:p-3 rounded-xl bg-white/[0.03] border border-white/10 text-[11px] italic font-serif text-slate-200 leading-relaxed relative group/quote hover:border-amber-400/30 transition-all">
-                            <p>{currentQuote}</p>
-                            <button
-                              type="button"
-                              onClick={() => handleStartEditQuote(musician.id, musician.quote || '')}
-                              className="opacity-0 group-hover/quote:opacity-100 transition-opacity absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-md bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-amber-300 text-[10px] flex items-center gap-1 border border-slate-700/80 cursor-pointer"
-                              title="Upravit úryvek textu"
-                            >
-                              <Pencil className="w-3 h-3" />
-                              <span className="text-[9px] font-sans font-medium">Upravit</span>
-                            </button>
-                          </div>
-                        )
                       )}
                       
                       <p className="text-xs text-slate-300/90 leading-relaxed">
@@ -1147,13 +788,9 @@ export const Hobbies: React.FC = () => {
                     </span>
                   </h4>
                   <p className="text-xs sm:text-sm text-slate-400">
-                    evermore • This Music May Contain Hope • brent I - III – s volnými místy pro obaly i možností úpravy textu
+                    evermore • This Music May Contain Hope • brent I - III
                   </p>
                 </div>
-              </div>
-              <div className="inline-flex items-center gap-2 text-xs text-purple-300/90 bg-purple-500/10 border border-purple-500/30 px-3 py-1.5 rounded-xl">
-                <ImagePlus className="w-3.5 h-3.5" />
-                <span>Volná místa pro obaly i vlastní texty alb</span>
               </div>
             </div>
 
@@ -1162,25 +799,12 @@ export const Hobbies: React.FC = () => {
                 const cover = albumCovers[album.id];
                 const isFirst = album.rank === 1;
                 const isSecond = album.rank === 2;
-                const currentQuote = albumQuotes[album.id] || album.quote;
-                const currentDesc = albumDescriptions[album.id] || album.description;
-                const isEditingQuote = editingAlbumQuoteId === album.id;
-                const isEditingDesc = editingAlbumDescId === album.id;
 
                 return (
                   <div
                     key={album.id}
                     className={`relative rounded-2xl p-5 flex flex-col justify-between transition-all duration-300 group border bg-gradient-to-b ${album.accentBg} ${album.accentBorder}`}
                   >
-                    {/* Hidden file input */}
-                    <input
-                      ref={el => { albumFileInputRefs.current[album.id] = el; }}
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => handleAlbumCoverUpload(e, album.id)}
-                    />
-
                     <div>
                       {/* Top Rank Badge */}
                       <div className="flex items-center justify-between mb-4">
@@ -1196,21 +820,10 @@ export const Hobbies: React.FC = () => {
                           }`} />
                           {album.rank}. místo
                         </span>
-
-                        {cover && (
-                          <button
-                            onClick={(e) => handleRemoveAlbumCover(album.id, e)}
-                            className="p-1 rounded-full bg-red-500/20 text-red-300 hover:bg-red-500/40 border border-red-500/30 transition-colors"
-                            title="Odebrat obal"
-                          >
-                            <X className="w-3.5 h-3.5" />
-                          </button>
-                        )}
                       </div>
 
                       {/* Vinyl + Album Cover Area */}
                       <div className="relative mb-5 flex justify-center">
-                        {/* Vinyl disk sticking out */}
                         <div className="relative group/albumCover">
                           <div className="absolute -top-1.5 -right-2.5 w-40 h-40 sm:w-44 sm:h-44 rounded-full bg-neutral-950 border-4 border-neutral-900 shadow-xl flex items-center justify-center opacity-70 group-hover/albumCover:translate-x-2 transition-transform duration-300">
                             <div className="w-32 h-32 sm:w-36 sm:h-36 rounded-full border border-neutral-800 flex items-center justify-center">
@@ -1220,32 +833,13 @@ export const Hobbies: React.FC = () => {
                             </div>
                           </div>
 
-                          {/* Cover slot */}
-                          <div
-                            onClick={() => albumFileInputRefs.current[album.id]?.click()}
-                            className="cursor-pointer relative w-44 h-44 sm:w-48 sm:h-48 rounded-2xl overflow-hidden border-2 border-dashed border-slate-700 hover:border-purple-400/70 transition-all bg-slate-950/90 shadow-2xl flex flex-col items-center justify-center z-10 group/cover"
-                          >
-                            {cover ? (
-                              <>
-                                <img
-                                  src={cover}
-                                  alt={album.title}
-                                  className="w-full h-full object-cover group-hover/cover:scale-105 transition-transform duration-300"
-                                />
-                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover/cover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-xs text-white font-medium backdrop-blur-xs">
-                                  <Upload className="w-4 h-4" />
-                                  Změnit obal
-                                </div>
-                              </>
-                            ) : (
-                              <div className="p-3 text-center flex flex-col items-center justify-center text-slate-400 group-hover/cover:text-purple-300 transition-colors">
-                                <div className="w-12 h-12 rounded-full bg-slate-900/90 flex items-center justify-center mb-2 border border-slate-700 group-hover/cover:border-purple-500/50 group-hover/cover:scale-105 transition-all">
-                                  <ImagePlus className="w-6 h-6 text-slate-300 group-hover/cover:text-purple-300" />
-                                </div>
-                                <span className="text-xs font-bold text-slate-200 block">Vložit obal alba</span>
-                                <span className="text-[10px] text-slate-400 block mt-0.5">Klikni pro nahrání</span>
-                              </div>
-                            )}
+                          {/* Cover frame */}
+                          <div className="relative w-44 h-44 sm:w-48 sm:h-48 rounded-2xl overflow-hidden border border-slate-700/80 bg-slate-950/90 shadow-2xl flex flex-col items-center justify-center z-10">
+                            <img
+                              src={cover}
+                              alt={album.title}
+                              className="w-full h-full object-cover"
+                            />
                           </div>
                         </div>
                       </div>
@@ -1289,128 +883,15 @@ export const Hobbies: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Quote / Lyrics editor or display */}
-                      {isEditingQuote ? (
-                        <div className="mb-3 p-3 rounded-xl bg-purple-950/40 border border-purple-500/40 shadow-inner">
-                          <label className="block text-[11px] font-bold text-purple-300 mb-1 flex items-center justify-between">
-                            <span>Úryvek textu / citát z alba:</span>
-                            <span className="text-[9px] text-slate-400 font-normal">Text písně z alba</span>
-                          </label>
-                          <textarea
-                            value={tempAlbumQuoteText}
-                            onChange={(e) => setTempAlbumQuoteText(e.target.value)}
-                            rows={3}
-                            className="w-full bg-slate-950/90 border border-slate-700 rounded-lg p-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 font-serif italic"
-                            placeholder="Napiš úryvek textu písně z tohoto alba..."
-                          />
-                          <div className="flex items-center justify-between mt-2.5 pt-2 border-t border-slate-800">
-                            <button
-                              type="button"
-                              onClick={() => handleResetAlbumQuote(album.id)}
-                              className="text-[10px] text-slate-400 hover:text-rose-400 transition-colors underline cursor-pointer"
-                            >
-                              Obnovit původní
-                            </button>
-                            <div className="flex items-center gap-1.5">
-                              <button
-                                type="button"
-                                onClick={() => setEditingAlbumQuoteId(null)}
-                                className="px-2.5 py-1 rounded-md text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 cursor-pointer"
-                              >
-                                Zrušit
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => handleSaveAlbumQuote(album.id)}
-                                className="px-3 py-1 rounded-md text-[11px] bg-purple-500 hover:bg-purple-400 text-white font-bold flex items-center gap-1 cursor-pointer shadow-sm"
-                              >
-                                <Check className="w-3.5 h-3.5" />
-                                Uložit
-                              </button>
-                            </div>
-                          </div>
+                      {album.quote && (
+                        <div className="mb-3 p-2.5 sm:p-3 rounded-xl bg-black/35 border border-white/5 text-[11px] italic font-serif text-slate-200 leading-snug">
+                          <p>{album.quote}</p>
                         </div>
-                      ) : (
-                        currentQuote ? (
-                          <div className="mb-3 p-2.5 sm:p-3 rounded-xl bg-black/35 border border-white/5 text-[11px] italic font-serif text-slate-200 leading-snug relative group/quote hover:border-purple-400/30 transition-all">
-                            <p>{currentQuote}</p>
-                            <button
-                              type="button"
-                              onClick={() => handleStartEditAlbumQuote(album.id, album.quote || '')}
-                              className="opacity-0 group-hover/quote:opacity-100 transition-opacity absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-md bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-purple-300 text-[10px] flex items-center gap-1 border border-slate-700/80 cursor-pointer shadow-sm"
-                              title="Upravit úryvek textu"
-                            >
-                              <Pencil className="w-3 h-3" />
-                              <span className="text-[9px] font-sans font-medium">Upravit</span>
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => handleStartEditAlbumQuote(album.id, album.quote || '')}
-                            className="mb-3 w-full py-1.5 rounded-xl border border-dashed border-slate-700 hover:border-purple-400/50 text-[11px] text-slate-400 hover:text-purple-300 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                          >
-                            <Pencil className="w-3 h-3" />
-                            <span>Přidat úryvek textu</span>
-                          </button>
-                        )
                       )}
 
-                      {/* Description editor or display */}
-                      {isEditingDesc ? (
-                        <div className="mb-3 p-3 rounded-xl bg-slate-950/80 border border-slate-700 shadow-inner">
-                          <label className="block text-[11px] font-bold text-slate-300 mb-1 flex items-center justify-between">
-                            <span>Popis alba:</span>
-                          </label>
-                          <textarea
-                            value={tempAlbumDescText}
-                            onChange={(e) => setTempAlbumDescText(e.target.value)}
-                            rows={3}
-                            className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 leading-relaxed"
-                            placeholder="Napiš popis alba..."
-                          />
-                          <div className="flex items-center justify-between mt-2.5 pt-2 border-t border-slate-800">
-                            <button
-                              type="button"
-                              onClick={() => handleResetAlbumDesc(album.id)}
-                              className="text-[10px] text-slate-400 hover:text-rose-400 transition-colors underline cursor-pointer"
-                            >
-                              Obnovit původní
-                            </button>
-                            <div className="flex items-center gap-1.5">
-                              <button
-                                type="button"
-                                onClick={() => setEditingAlbumDescId(null)}
-                                className="px-2.5 py-1 rounded-md text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 cursor-pointer"
-                              >
-                                Zrušit
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => handleSaveAlbumDesc(album.id)}
-                                className="px-3 py-1 rounded-md text-[11px] bg-purple-500 hover:bg-purple-400 text-white font-bold flex items-center gap-1 cursor-pointer shadow-sm"
-                              >
-                                <Check className="w-3.5 h-3.5" />
-                                Uložit
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="relative group/desc">
-                          <p className="text-xs text-slate-300/90 leading-relaxed pr-6">
-                            {currentDesc}
-                          </p>
-                          <button
-                            type="button"
-                            onClick={() => handleStartEditAlbumDesc(album.id, album.description)}
-                            className="opacity-0 group-hover/desc:opacity-100 transition-opacity absolute -top-1 right-0 p-1 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-purple-300 text-[10px] flex items-center gap-0.5 border border-slate-700/80 cursor-pointer"
-                            title="Upravit popis alba"
-                          >
-                            <Pencil className="w-3 h-3" />
-                          </button>
-                        </div>
-                      )}
+                      <p className="text-xs text-slate-300/90 leading-relaxed">
+                        {album.description}
+                      </p>
                     </div>
 
                     <div className="mt-5 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
@@ -1425,7 +906,7 @@ export const Hobbies: React.FC = () => {
         </div>
         )}
 
-        {/* 3. BLOK: OBLÍBENÉ KNIHY (S VOLNÝMI MÍSTY PRO VLOŽENÍ OBÁLEK) */}
+        {/* 3. BLOK: OBLÍBENÉ KNIHY */}
         {(activeSubTab === 'all' || activeSubTab === 'books') && (
         <div className="mb-16">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
@@ -1438,18 +919,13 @@ export const Hobbies: React.FC = () => {
                   Oblíbené knihy
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-400">
-                  Eragon, Storočí, Ranhojička, Dvůr trnů a růží, Bezmocná – kliknutím na knihu nahraješ její obálku
+                  Eragon, Storočí, Ranhojička, Dvůr trnů a růží, Bezmocná – kliknutím na knihu zobrazíš její detail
                 </p>
               </div>
             </div>
-
-            <div className="inline-flex items-center gap-2 text-xs text-amber-300/90 bg-amber-500/10 border border-amber-500/30 px-3 py-1.5 rounded-xl">
-              <ImagePlus className="w-3.5 h-3.5" />
-              <span>Volná místa připravena na tvé obrázky obálek</span>
-            </div>
           </div>
 
-          {/* Book Cards Grid with Empty / Uploadable Cover Slots */}
+          {/* Book Cards Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
             {BOOKS.map((book) => {
               const isSelected = activeBook.id === book.id;
@@ -1466,79 +942,13 @@ export const Hobbies: React.FC = () => {
                       : 'bg-slate-950/70 border border-slate-800 hover:border-slate-700 hover:bg-slate-900/60'
                   }`}
                 >
-                  {/* Hidden file input for book cover */}
-                  <input
-                    ref={el => { bookFileInputRefs.current[book.id] = el; }}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => handleBookCoverUpload(e, book.id)}
-                  />
-
                   {/* Book Cover Area */}
-                  <div 
-                    onClick={(e) => {
-                      // Allow clicking on cover area directly to trigger upload
-                      e.stopPropagation();
-                      setActiveBook(book);
-                      bookFileInputRefs.current[book.id]?.click();
-                    }}
-                    className="relative aspect-[2/3] w-full rounded-xl overflow-hidden shadow-2xl mb-4 group/cover border-2 border-dashed border-slate-700 hover:border-purple-400/70 transition-all bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 flex flex-col justify-between p-3"
-                  >
-                    {coverImg ? (
-                      <>
-                        <img 
-                          src={coverImg} 
-                          alt={book.title} 
-                          className="absolute inset-0 w-full h-full object-cover group-hover/cover:scale-105 transition-transform duration-300"
-                        />
-                        {/* Remove button */}
-                        <div className="absolute top-2 right-2 z-30">
-                          <button
-                            onClick={(e) => handleRemoveBookCover(book.id, e)}
-                            className="p-1 rounded-full bg-red-600/80 hover:bg-red-500 text-white shadow-lg backdrop-blur-sm transition-colors"
-                            title="Odebrat obálku"
-                          >
-                            <X className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                        {/* Hover change text */}
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/cover:opacity-100 transition-opacity flex items-center justify-center gap-1 text-xs text-white font-medium z-20">
-                          <Upload className="w-3.5 h-3.5" />
-                          Změnit obálku
-                        </div>
-                      </>
-                    ) : (
-                      <div className="h-full flex flex-col justify-between items-center text-center py-2 relative z-10">
-                        {/* Book Badge */}
-                        <span className="text-[9px] uppercase tracking-wider font-mono px-2 py-0.5 rounded bg-slate-800/80 text-purple-300 border border-purple-500/30">
-                          {book.coverBadge}
-                        </span>
-
-                        {/* Upload placeholder icon */}
-                        <div className="my-auto flex flex-col items-center group-hover/cover:scale-110 transition-transform">
-                          <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-300 mb-2">
-                            <ImagePlus className="w-6 h-6" />
-                          </div>
-                          <span className="text-xs font-semibold text-slate-200 block">
-                            Vložit obálku
-                          </span>
-                          <span className="text-[10px] text-slate-400 block mt-0.5">
-                            Klikni pro nahrání
-                          </span>
-                        </div>
-
-                        {/* Title watermark */}
-                        <div>
-                          <p className="font-serif font-black text-xs text-slate-300 tracking-wider uppercase truncate max-w-[120px]">
-                            {book.title}
-                          </p>
-                          <p className="text-[9px] text-slate-400 truncate max-w-[120px]">
-                            {book.author}
-                          </p>
-                        </div>
-                      </div>
-                    )}
+                  <div className="relative aspect-[2/3] w-full rounded-xl overflow-hidden shadow-2xl mb-4 border border-slate-700/80 bg-slate-950">
+                    <img 
+                      src={coverImg} 
+                      alt={book.title} 
+                      className="w-full h-full object-cover"
+                    />
                   </div>
 
                   {/* Title & Author Info */}

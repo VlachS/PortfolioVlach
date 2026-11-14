@@ -4,8 +4,6 @@ import {
   User, 
   MapPin, 
   Bus, 
-  Upload, 
-  X, 
   BookOpen, 
   Heart, 
   Compass, 
@@ -19,10 +17,6 @@ const DEFAULT_CAT_PHOTO = `${import.meta.env.BASE_URL}images/kocour.jpg`;
 const DEFAULT_DOG_PHOTO = `${import.meta.env.BASE_URL}images/fenka.jpg`;
 
 export const AboutMe: React.FC = () => {
-  // State for cat and dog photo uploads with localStorage persistence
-  const [catPhoto, setCatPhoto] = useState<string | null>(DEFAULT_CAT_PHOTO);
-  const [dogPhoto, setDogPhoto] = useState<string | null>(DEFAULT_DOG_PHOTO);
-
   // Hover states for hearts animation
   const [isCatHovered, setIsCatHovered] = useState<boolean>(false);
   const [isDogHovered, setIsDogHovered] = useState<boolean>(false);
@@ -35,19 +29,8 @@ export const AboutMe: React.FC = () => {
   const [isGiraffeEating, setIsGiraffeEating] = useState<boolean>(false);
   const [isElephantActive, setIsElephantActive] = useState<boolean>(false);
 
-  const catFileInputRef = useRef<HTMLInputElement>(null);
-  const dogFileInputRef = useRef<HTMLInputElement>(null);
   const giraffeTimerRef = useRef<NodeJS.Timeout | null>(null);
   const elephantTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Load photos from localStorage on mount
-  useEffect(() => {
-    const savedCat = localStorage.getItem('simon_cat_photo');
-    if (savedCat) setCatPhoto(savedCat);
-
-    const savedDog = localStorage.getItem('simon_dog_photo');
-    if (savedDog) setDogPhoto(savedDog);
-  }, []);
 
   // Web Audio sound synthesizer for Elephant Trumpet
   const playElephantTrumpet = useCallback(() => {
@@ -154,37 +137,6 @@ export const AboutMe: React.FC = () => {
     elephantTimerRef.current = setTimeout(() => {
       setIsElephantActive(false);
     }, 2600);
-  };
-
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>, petType: 'cat' | 'dog') => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      if (petType === 'cat') {
-        setCatPhoto(result);
-        localStorage.setItem('simon_cat_photo', result);
-      } else {
-        setDogPhoto(result);
-        localStorage.setItem('simon_dog_photo', result);
-      }
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleRemovePhoto = (petType: 'cat' | 'dog', e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (petType === 'cat') {
-      setCatPhoto(DEFAULT_CAT_PHOTO);
-      localStorage.removeItem('simon_cat_photo');
-      if (catFileInputRef.current) catFileInputRef.current.value = '';
-    } else {
-      setDogPhoto(DEFAULT_DOG_PHOTO);
-      localStorage.removeItem('simon_dog_photo');
-      if (dogFileInputRef.current) dogFileInputRef.current.value = '';
-    }
   };
 
   // Stations along the FlixBus journey: Cheb -> Karlovy Vary -> Praha (přestup) -> Brno
@@ -971,20 +923,10 @@ export const AboutMe: React.FC = () => {
               
               {/* 1. CAT PHOTO WINDOW (OKÉNKO KOCOUR) */}
               <div className="flex flex-col items-center">
-                <input
-                  type="file"
-                  ref={catFileInputRef}
-                  accept="image/*"
-                  onChange={(e) => handlePhotoUpload(e, 'cat')}
-                  className="hidden"
-                />
-
                 <div 
-                  className="w-full relative aspect-[4/3] rounded-2xl border-2 border-slate-800 hover:border-purple-500/80 bg-[#090C14] overflow-hidden cursor-pointer transition-all shadow-lg flex items-center justify-center select-none"
+                  className="w-full relative aspect-[4/3] rounded-2xl border-2 border-slate-800 hover:border-purple-500/80 bg-[#090C14] overflow-hidden transition-all shadow-lg flex items-center justify-center select-none"
                   onMouseEnter={() => setIsCatHovered(true)}
                   onMouseLeave={() => setIsCatHovered(false)}
-                  onClick={() => catFileInputRef.current?.click()}
-                  title="Klikněte pro změnu fotky kocoura"
                 >
                   {/* FLOATING HEARTS ON HOVER (ONLY HEARTS, NO TEXT) */}
                   <AnimatePresence>
@@ -1025,135 +967,25 @@ export const AboutMe: React.FC = () => {
                     )}
                   </AnimatePresence>
 
-                  {catPhoto ? (
-                    <>
-                      <img 
-                        src={catPhoto} 
-                        alt="Kocour" 
-                        className="w-full h-full object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={(e) => handleRemovePhoto('cat', e)}
-                        className="absolute top-2.5 right-2.5 z-20 p-1.5 rounded-full bg-black/75 hover:bg-black text-white hover:text-rose-400 transition-colors shadow-md"
-                        title="Odstranit vlastní fotku"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    </>
-                  ) : (
-                    /* High-fidelity portrait of Šimon's tabby cat with green-amber eyes and whiskers */
-                    <svg viewBox="0 0 240 180" className="w-full h-full object-cover">
-                      {/* Dark warm ambient background */}
-                      <rect width="240" height="180" fill="#111625" />
-                      <circle cx="120" cy="90" r="80" fill="#2E1A47" opacity="0.35" />
-
-                      {/* Cat Body & Shoulders */}
-                      <ellipse cx="120" cy="195" rx="72" ry="48" fill="#524840" />
-                      <ellipse cx="120" cy="195" rx="58" ry="38" fill="#786B5D" />
-
-                      {/* White chest fluff */}
-                      <path d="M 105 150 Q 120 162 135 150 Q 120 180 105 150 Z" fill="#F5F5F4" />
-
-                      {/* POINTED CAT EARS */}
-                      {/* Left Ear */}
-                      <path d="M 72 82 L 60 30 L 98 56 Z" fill="#524840" />
-                      <path d="M 74 76 L 66 38 L 94 58 Z" fill="#FECDD3" opacity="0.75" />
-                      {/* Inner ear tufts */}
-                      <path d="M 76 68 L 70 52 M 80 66 L 76 50" stroke="#F5F5F4" strokeWidth="1.5" strokeLinecap="round" />
-
-                      {/* Right Ear */}
-                      <path d="M 168 82 L 180 30 L 142 56 Z" fill="#524840" />
-                      <path d="M 166 76 L 174 38 L 146 58 Z" fill="#FECDD3" opacity="0.75" />
-                      <path d="M 164 68 L 170 52 M 160 66 L 164 50" stroke="#F5F5F4" strokeWidth="1.5" strokeLinecap="round" />
-
-                      {/* CAT HEAD */}
-                      <ellipse cx="120" cy="94" rx="48" ry="42" fill="#786B5D" />
-                      <ellipse cx="120" cy="92" rx="44" ry="38" fill="#8C7D6D" />
-
-                      {/* Tabby forehead stripes ('M' pattern) */}
-                      <path d="M 106 60 L 112 74 L 120 62 L 128 74 L 134 60" stroke="#2B241D" strokeWidth="2.8" strokeLinecap="round" fill="none" />
-                      <path d="M 120 54 L 120 74" stroke="#2B241D" strokeWidth="2.5" strokeLinecap="round" />
-                      <path d="M 98 68 L 105 76 M 142 68 L 135 76" stroke="#2B241D" strokeWidth="2.2" strokeLinecap="round" />
-
-                      {/* Cheek stripes */}
-                      <path d="M 80 92 L 92 95 M 78 102 L 90 102 M 80 112 L 92 108" stroke="#2B241D" strokeWidth="2.2" strokeLinecap="round" />
-                      <path d="M 160 92 L 148 95 M 162 102 L 150 102 M 160 112 L 148 108" stroke="#2B241D" strokeWidth="2.2" strokeLinecap="round" />
-
-                      {/* Creamy muzzle */}
-                      <ellipse cx="112" cy="115" rx="12" ry="9" fill="#F5F5F4" />
-                      <ellipse cx="128" cy="115" rx="12" ry="9" fill="#F5F5F4" />
-                      <ellipse cx="120" cy="126" rx="8" ry="6" fill="#F5F5F4" />
-
-                      {/* Cute pink cat nose with dark outline */}
-                      <path d="M 115 106 Q 120 108 125 106 L 120 113 Z" fill="#FB7185" stroke="#4C1D24" strokeWidth="0.8" />
-
-                      {/* Mouth curve */}
-                      <path d="M 120 113 L 120 118 M 120 118 Q 114 122 108 119 M 120 118 Q 126 122 132 119" stroke="#3D2820" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-
-                      {/* VIVID GREEN-AMBER TABBY EYES */}
-                      {/* Left Eye */}
-                      <g>
-                        <ellipse cx="102" cy="88" rx="8" ry="9.5" fill="#1C1917" />
-                        <ellipse cx="102" cy="88" rx="7" ry="8.5" fill="#84CC16" />
-                        <ellipse cx="102" cy="88" rx="6" ry="7" fill="#EAB308" opacity="0.6" />
-                        <ellipse cx="102" cy="88" rx="2.5" ry="7" fill="#0F172A" />
-                        <circle cx="100.5" cy="85" r="2.2" fill="#FFFFFF" />
-                        <circle cx="103.5" cy="90.5" r="0.9" fill="#FFFFFF" />
-                      </g>
-                      {/* Right Eye */}
-                      <g>
-                        <ellipse cx="138" cy="88" rx="8" ry="9.5" fill="#1C1917" />
-                        <ellipse cx="138" cy="88" rx="7" ry="8.5" fill="#84CC16" />
-                        <ellipse cx="138" cy="88" rx="6" ry="7" fill="#EAB308" opacity="0.6" />
-                        <ellipse cx="138" cy="88" rx="2.5" ry="7" fill="#0F172A" />
-                        <circle cx="136.5" cy="85" r="2.2" fill="#FFFFFF" />
-                        <circle cx="139.5" cy="90.5" r="0.9" fill="#FFFFFF" />
-                      </g>
-
-                      {/* LONG WHITE WHISKERS */}
-                      <g stroke="#FFFFFF" strokeWidth="1.2" strokeLinecap="round" opacity="0.9">
-                        <line x1="106" y1="113" x2="68" y2="106" />
-                        <line x1="105" y1="116" x2="65" y2="116" />
-                        <line x1="106" y1="119" x2="70" y2="126" />
-                        <line x1="134" y1="113" x2="172" y2="106" />
-                        <line x1="135" y1="116" x2="175" y2="116" />
-                        <line x1="134" y1="119" x2="170" y2="126" />
-                      </g>
-                    </svg>
-                  )}
+                  <img 
+                    src={DEFAULT_CAT_PHOTO} 
+                    alt="Kocour" 
+                    className="w-full h-full object-cover"
+                  />
                 </div>
 
                 {/* Clean label below window */}
                 <div className="w-full mt-2.5 flex items-center justify-between px-1">
                   <span className="text-xs font-semibold text-white">Kocour</span>
-                  <button
-                    type="button"
-                    onClick={() => catFileInputRef.current?.click()}
-                    className="text-[10px] text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1 font-medium"
-                  >
-                    <Upload className="w-3 h-3" />
-                    <span>Nahrát fotku</span>
-                  </button>
                 </div>
               </div>
 
               {/* 2. DOG PHOTO WINDOW (OKÉNKO FENKA) */}
               <div className="flex flex-col items-center">
-                <input
-                  type="file"
-                  ref={dogFileInputRef}
-                  accept="image/*"
-                  onChange={(e) => handlePhotoUpload(e, 'dog')}
-                  className="hidden"
-                />
-
                 <div 
-                  className="w-full relative aspect-[4/3] rounded-2xl border-2 border-slate-800 hover:border-blue-500/80 bg-[#090C14] overflow-hidden cursor-pointer transition-all shadow-lg flex items-center justify-center select-none"
+                  className="w-full relative aspect-[4/3] rounded-2xl border-2 border-slate-800 hover:border-blue-500/80 bg-[#090C14] overflow-hidden transition-all shadow-lg flex items-center justify-center select-none"
                   onMouseEnter={() => setIsDogHovered(true)}
                   onMouseLeave={() => setIsDogHovered(false)}
-                  onClick={() => dogFileInputRef.current?.click()}
-                  title="Klikněte pro změnu fotky fenky"
                 >
                   {/* FLOATING HEARTS ON HOVER (ONLY HEARTS, NO TEXT) */}
                   <AnimatePresence>
@@ -1194,95 +1026,16 @@ export const AboutMe: React.FC = () => {
                     )}
                   </AnimatePresence>
 
-                  {dogPhoto ? (
-                    <>
-                      <img 
-                        src={dogPhoto} 
-                        alt="Fenka" 
-                        className="w-full h-full object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={(e) => handleRemovePhoto('dog', e)}
-                        className="absolute top-2.5 right-2.5 z-20 p-1.5 rounded-full bg-black/75 hover:bg-black text-white hover:text-rose-400 transition-colors shadow-md"
-                        title="Odstranit vlastní fotku"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    </>
-                  ) : (
-                    /* High-fidelity portrait of Šimon's golden retriever dog with kind brown eyes */
-                    <svg viewBox="0 0 240 180" className="w-full h-full object-cover">
-                      {/* Dark gentle ambient background */}
-                      <rect width="240" height="180" fill="#111625" />
-                      <circle cx="120" cy="90" r="80" fill="#1E293B" opacity="0.35" />
-
-                      {/* Golden dog chest and shoulders */}
-                      <ellipse cx="120" cy="195" rx="74" ry="50" fill="#D97706" />
-                      <ellipse cx="120" cy="195" rx="60" ry="40" fill="#F59E0B" />
-                      <path d="M 104 150 Q 120 172 136 150 Q 120 185 104 150 Z" fill="#FEF3C7" opacity="0.8" />
-
-                      {/* FLOPPY GOLDEN EARS */}
-                      {/* Left Ear */}
-                      <path d="M 80 62 C 60 70, 50 115, 68 132 C 76 138, 86 120, 84 95 Z" fill="#B45309" />
-                      <path d="M 82 66 C 65 74, 56 112, 70 126 Z" fill="#D97706" />
-
-                      {/* Right Ear */}
-                      <path d="M 160 62 C 180 70, 190 115, 172 132 C 164 138, 154 120, 156 95 Z" fill="#B45309" />
-                      <path d="M 158 66 C 175 74, 184 112, 170 126 Z" fill="#D97706" />
-
-                      {/* HEAD BASE */}
-                      <ellipse cx="120" cy="94" rx="46" ry="42" fill="#F59E0B" />
-                      <ellipse cx="120" cy="88" rx="40" ry="36" fill="#FBBF24" />
-
-                      {/* Soft forehead fur highlight */}
-                      <path d="M 112 55 Q 120 50 128 55 Q 120 85 112 55 Z" fill="#FEF3C7" opacity="0.5" />
-
-                      {/* SNOUT / MUZZLE */}
-                      <ellipse cx="120" cy="115" rx="22" ry="18" fill="#FDE68A" />
-                      <ellipse cx="120" cy="112" rx="19" ry="15" fill="#FFFBEB" />
-
-                      {/* BLACK DOG NOSE WITH REFLECTION */}
-                      <path d="M 111 106 Q 120 103 129 106 C 132 112, 126 118, 120 118 C 114 118, 108 112, 111 106 Z" fill="#1C1917" />
-                      <circle cx="116" cy="107" r="1.5" fill="#94A3B8" opacity="0.8" />
-
-                      {/* HAPPY DOG MOUTH & TONGUE */}
-                      <path d="M 120 118 L 120 124 M 120 124 Q 112 128 104 123 M 120 124 Q 128 128 136 123" stroke="#451A03" strokeWidth="2" strokeLinecap="round" fill="none" />
-                      {/* Little pink tongue tip */}
-                      <path d="M 116 125 C 116 132, 124 132, 124 125 Z" fill="#FB7185" />
-
-                      {/* WARM KIND BROWN EYES */}
-                      {/* Left Eye */}
-                      <g>
-                        <ellipse cx="102" cy="84" rx="6.5" ry="7.5" fill="#1C1917" />
-                        <ellipse cx="102" cy="84" rx="5" ry="6" fill="#451A03" />
-                        <circle cx="100.5" cy="82" r="2" fill="#FFFFFF" />
-                        <circle cx="103.5" cy="86" r="0.8" fill="#FFFFFF" />
-                        <path d="M 95 78 Q 102 75 109 78" stroke="#78350F" strokeWidth="1.8" strokeLinecap="round" fill="none" />
-                      </g>
-                      {/* Right Eye */}
-                      <g>
-                        <ellipse cx="138" cy="84" rx="6.5" ry="7.5" fill="#1C1917" />
-                        <ellipse cx="138" cy="84" rx="5" ry="6" fill="#451A03" />
-                        <circle cx="136.5" cy="82" r="2" fill="#FFFFFF" />
-                        <circle cx="139.5" cy="86" r="0.8" fill="#FFFFFF" />
-                        <path d="M 131 78 Q 138 75 145 78" stroke="#78350F" strokeWidth="1.8" strokeLinecap="round" fill="none" />
-                      </g>
-                    </svg>
-                  )}
+                  <img 
+                    src={DEFAULT_DOG_PHOTO} 
+                    alt="Fenka" 
+                    className="w-full h-full object-cover"
+                  />
                 </div>
 
                 {/* Clean label below window */}
                 <div className="w-full mt-2.5 flex items-center justify-between px-1">
                   <span className="text-xs font-semibold text-white">Fenka</span>
-                  <button
-                    type="button"
-                    onClick={() => dogFileInputRef.current?.click()}
-                    className="text-[10px] text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1 font-medium"
-                  >
-                    <Upload className="w-3 h-3" />
-                    <span>Nahrát fotku</span>
-                  </button>
                 </div>
               </div>
 

@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Upload, X } from 'lucide-react';
+import React from 'react';
 import { GiraffePeeker } from './GiraffePeeker';
 import { PixelGiraffeIcon } from './PixelGiraffeSideArt';
 import { ArcadeSectionId } from './ArcadeControlPanel';
@@ -90,43 +89,6 @@ export const Hero: React.FC<HeroProps> = ({
   onNavigate,
   onInsertCoin
 }) => {
-  const [customPhotoUrl, setCustomPhotoUrl] = useState<string | null>(DEFAULT_SIMON_PHOTO);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('simon_custom_photo');
-      if (saved) setCustomPhotoUrl(saved);
-    } catch {
-      // Ignore localStorage issues
-    }
-  }, []);
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        setCustomPhotoUrl(result);
-        try {
-          localStorage.setItem('simon_custom_photo', result);
-        } catch {
-          // Ignore quota exceeded
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleRemovePhoto = () => {
-    setCustomPhotoUrl(DEFAULT_SIMON_PHOTO);
-    try {
-      localStorage.removeItem('simon_custom_photo');
-    } catch {
-      // Ignore
-    }
-  };
 
   const MENU_TILES: {
     id: ArcadeSectionId;
@@ -350,93 +312,16 @@ export const Hero: React.FC<HeroProps> = ({
 
                 <div className="relative z-10 bg-[#14111F] border-2 border-[#A855F7]/50 rounded-2xl p-3.5 shadow-2xl">
                   <div className="relative aspect-[4/4.5] rounded-xl overflow-hidden bg-[#05070D] border border-[#38BDF8]/30 flex items-center justify-center">
-                    {customPhotoUrl ? (
-                      <img
-                        src={customPhotoUrl}
-                        alt="Šimon Vlach"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-[#171528] to-[#05070D] p-5 text-center">
-                        <div className="w-24 h-24 rounded-full bg-[#1F1B33] border-2 border-[#A855F7]/60 p-1 mb-3 relative shadow-lg">
-                          <svg
-                            viewBox="0 0 100 100"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="w-full h-full rounded-full"
-                          >
-                            <circle cx="50" cy="50" r="48" fill="#14111F" />
-                            <path
-                              d="M26 44 C24 24, 42 12, 60 12 C78 12, 82 26, 80 44 C74 40, 68 38, 62 40 C56 32, 48 30, 38 34 C32 36, 28 40, 26 44 Z"
-                              fill="#FFE93B"
-                            />
-                            <path
-                              d="M38 18 C50 16, 68 20, 72 32 C64 26, 54 24, 42 26 Z"
-                              fill="#FEF08A"
-                            />
-                            <path
-                              d="M32 42 C32 35, 68 35, 68 42 C68 56, 62 70, 50 70 C38 70, 32 56, 32 42 Z"
-                              fill="#E9E6D8"
-                            />
-                            <circle cx="43" cy="48" r="2.5" fill="#38BDF8" />
-                            <circle cx="57" cy="48" r="2.5" fill="#38BDF8" />
-                            <path
-                              d="M45 58 Q50 62 55 58"
-                              stroke="#334155"
-                              strokeWidth="1.8"
-                              strokeLinecap="round"
-                            />
-                            <path
-                              d="M20 95 C20 78, 35 72, 50 72 C65 72, 80 78, 80 95 Z"
-                              fill="#0A0A14"
-                            />
-                          </svg>
-                          <div className="absolute bottom-0 right-0 w-5 h-5 rounded-full bg-[#39FF88] border-2 border-[#14111F] flex items-center justify-center text-[#05070D] font-bold text-[10px]">
-                            ✓
-                          </div>
-                        </div>
-
-                        <span className="font-pixel text-[9px] text-[#FFE93B]">
-                          AVATAR // ŠIMON
-                        </span>
-                        <p className="text-xs text-[#8B93A7] mt-1.5 max-w-[190px]">
-                          Vlastní fotku můžeš nahrát tlačítkem níže.
-                        </p>
-                      </div>
-                    )}
-
-                    {customPhotoUrl && (
-                      <button
-                        type="button"
-                        onClick={handleRemovePhoto}
-                        aria-label="Obnovit výchozí ilustraci"
-                        className="absolute top-2 right-2 p-1.5 rounded-full bg-black/80 hover:bg-black text-white text-xs border border-slate-700 transition-colors cursor-pointer"
-                        title="Obnovit výchozí ilustraci"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    )}
+                    <img
+                      src={DEFAULT_SIMON_PHOTO}
+                      alt="Šimon Vlach"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
 
                   <div className="mt-3 flex items-center justify-between text-xs">
                     <span className="font-pixel text-[8px] text-[#39FF88]">1UP: ŠIMON</span>
-
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      onChange={handleFileUpload}
-                      accept="image/*"
-                      className="hidden"
-                    />
-
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="flex items-center gap-1 text-[11px] text-[#E9E6D8] hover:text-[#FFE93B] transition-colors font-medium bg-[#A855F7]/20 hover:bg-[#A855F7]/30 border border-[#A855F7]/50 px-2.5 py-1 rounded-md cursor-pointer"
-                    >
-                      <Upload className="w-3 h-3" />
-                      <span>{customPhotoUrl ? 'Změnit fotku' : 'Nahrát fotku'}</span>
-                    </button>
+                    <span className="font-pixel text-[8px] text-[#FFE93B]">PLAYER 1</span>
                   </div>
                 </div>
               </div>
