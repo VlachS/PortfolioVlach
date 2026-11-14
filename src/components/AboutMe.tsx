@@ -15,10 +15,13 @@ import {
   ArrowRight
 } from 'lucide-react';
 
+const DEFAULT_CAT_PHOTO = `${import.meta.env.BASE_URL}images/kocour.jpg`;
+const DEFAULT_DOG_PHOTO = `${import.meta.env.BASE_URL}images/fenka.jpg`;
+
 export const AboutMe: React.FC = () => {
   // State for cat and dog photo uploads with localStorage persistence
-  const [catPhoto, setCatPhoto] = useState<string | null>(null);
-  const [dogPhoto, setDogPhoto] = useState<string | null>(null);
+  const [catPhoto, setCatPhoto] = useState<string | null>(DEFAULT_CAT_PHOTO);
+  const [dogPhoto, setDogPhoto] = useState<string | null>(DEFAULT_DOG_PHOTO);
 
   // Hover states for hearts animation
   const [isCatHovered, setIsCatHovered] = useState<boolean>(false);
@@ -174,11 +177,11 @@ export const AboutMe: React.FC = () => {
   const handleRemovePhoto = (petType: 'cat' | 'dog', e: React.MouseEvent) => {
     e.stopPropagation();
     if (petType === 'cat') {
-      setCatPhoto(null);
+      setCatPhoto(DEFAULT_CAT_PHOTO);
       localStorage.removeItem('simon_cat_photo');
       if (catFileInputRef.current) catFileInputRef.current.value = '';
     } else {
-      setDogPhoto(null);
+      setDogPhoto(DEFAULT_DOG_PHOTO);
       localStorage.removeItem('simon_dog_photo');
       if (dogFileInputRef.current) dogFileInputRef.current.value = '';
     }

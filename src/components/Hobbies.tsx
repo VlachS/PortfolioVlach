@@ -195,13 +195,33 @@ const ALBUMS: AlbumSlot[] = [
   }
 ];
 
+const DEFAULT_BOOK_COVERS: Record<string, string> = {
+  eragon: `${import.meta.env.BASE_URL}images/book-eragon.jpg`,
+  storoci: `${import.meta.env.BASE_URL}images/book-storoci.jpg`,
+  ranhojicka: `${import.meta.env.BASE_URL}images/book-ranhojicka.jpg`,
+  acotar: `${import.meta.env.BASE_URL}images/book-acotar.webp`,
+  bezmocna: `${import.meta.env.BASE_URL}images/book-bezmocna.jpg`
+};
+
+const DEFAULT_ALBUM_COVERS: Record<string, string> = {
+  evermore: `${import.meta.env.BASE_URL}images/album-evermore.jpg`,
+  this_music_may_contain_hope: `${import.meta.env.BASE_URL}images/album-raye.jpg`,
+  brent_trilogy: `${import.meta.env.BASE_URL}images/album-brent.jpg`
+};
+
+const DEFAULT_MUSICIAN_PHOTOS: Record<string, string> = {
+  taylor_swift: `${import.meta.env.BASE_URL}images/musician-taylor.jpg`,
+  griff: `${import.meta.env.BASE_URL}images/musician-griff.jpg`,
+  raye: `${import.meta.env.BASE_URL}images/musician-raye.jpg`
+};
+
 export const Hobbies: React.FC = () => {
   const [activeBook, setActiveBook] = useState<Book>(BOOKS[0]);
   const [activeSubTab, setActiveSubTab] = useState<'all' | 'apps' | 'music' | 'books' | 'comics'>('all');
   
-  // Book covers stored in localStorage or state
+  // Book covers stored in localStorage or state (with hardcoded defaults)
   const [bookCovers, setBookCovers] = useState<Record<string, string>>(() => {
-    const saved: Record<string, string> = {};
+    const saved: Record<string, string> = { ...DEFAULT_BOOK_COVERS };
     BOOKS.forEach(b => {
       const stored = localStorage.getItem(`simon_book_cover_${b.id}`);
       if (stored) saved[b.id] = stored;
@@ -209,9 +229,9 @@ export const Hobbies: React.FC = () => {
     return saved;
   });
 
-  // Album covers stored in localStorage or state
+  // Album covers stored in localStorage or state (with hardcoded defaults)
   const [albumCovers, setAlbumCovers] = useState<Record<string, string>>(() => {
-    const saved: Record<string, string> = {};
+    const saved: Record<string, string> = { ...DEFAULT_ALBUM_COVERS };
     ALBUMS.forEach(a => {
       const stored = localStorage.getItem(`simon_album_cover_${a.id}`);
       if (stored) saved[a.id] = stored;
@@ -219,9 +239,9 @@ export const Hobbies: React.FC = () => {
     return saved;
   });
 
-  // Musician photos stored in localStorage or state (with backward compatibility)
+  // Musician photos stored in localStorage or state (with hardcoded defaults)
   const [musicianPhotos, setMusicianPhotos] = useState<Record<string, string>>(() => {
-    const saved: Record<string, string> = {};
+    const saved: Record<string, string> = { ...DEFAULT_MUSICIAN_PHOTOS };
     MUSICIANS.forEach(m => {
       let stored = localStorage.getItem(`simon_musician_photo_${m.id}`);
       if (!stored && m.id === 'griff') {
@@ -446,7 +466,11 @@ export const Hobbies: React.FC = () => {
     e.stopPropagation();
     setAlbumCovers(prev => {
       const next = { ...prev };
-      delete next[albumId];
+      if (DEFAULT_ALBUM_COVERS[albumId]) {
+        next[albumId] = DEFAULT_ALBUM_COVERS[albumId];
+      } else {
+        delete next[albumId];
+      }
       return next;
     });
     localStorage.removeItem(`simon_album_cover_${albumId}`);
@@ -472,7 +496,11 @@ export const Hobbies: React.FC = () => {
     e.stopPropagation();
     setBookCovers(prev => {
       const next = { ...prev };
-      delete next[bookId];
+      if (DEFAULT_BOOK_COVERS[bookId]) {
+        next[bookId] = DEFAULT_BOOK_COVERS[bookId];
+      } else {
+        delete next[bookId];
+      }
       return next;
     });
     localStorage.removeItem(`simon_book_cover_${bookId}`);
@@ -498,7 +526,11 @@ export const Hobbies: React.FC = () => {
     e.stopPropagation();
     setMusicianPhotos(prev => {
       const next = { ...prev };
-      delete next[musicianId];
+      if (DEFAULT_MUSICIAN_PHOTOS[musicianId]) {
+        next[musicianId] = DEFAULT_MUSICIAN_PHOTOS[musicianId];
+      } else {
+        delete next[musicianId];
+      }
       return next;
     });
     localStorage.removeItem(`simon_musician_photo_${musicianId}`);
@@ -806,7 +838,17 @@ export const Hobbies: React.FC = () => {
 
                     {/* Album Art Card */}
                     <div className="relative w-44 h-44 sm:w-52 sm:h-52 rounded-2xl overflow-hidden shadow-2xl border-2 border-amber-900/40 bg-gradient-to-tr from-stone-900 via-amber-950 to-stone-800 p-4 flex flex-col justify-between">
-                      <div className="flex justify-between items-start">
+                      {albumCovers['evermore'] && (
+                        <>
+                          <img
+                            src={albumCovers['evermore']}
+                            alt="Album evermore"
+                            className="absolute inset-0 w-full h-full object-cover opacity-80"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/45" />
+                        </>
+                      )}
+                      <div className="relative z-10 flex justify-between items-start">
                         <span className="text-[9px] tracking-widest uppercase font-mono px-2 py-0.5 rounded bg-black/70 text-amber-200/90 border border-amber-700/30">
                           Album evermore
                         </span>
@@ -815,7 +857,7 @@ export const Hobbies: React.FC = () => {
                         </span>
                       </div>
 
-                      <div>
+                      <div className="relative z-10">
                         <p className="text-[11px] uppercase tracking-widest text-amber-300 font-semibold mb-0.5">
                           Taylor Swift
                         </p>

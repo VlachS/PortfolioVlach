@@ -83,12 +83,14 @@ const PixelContactSpeakerIcon: React.FC = () => (
   </svg>
 );
 
+const DEFAULT_SIMON_PHOTO = `${import.meta.env.BASE_URL}images/simon.jpg`;
+
 export const Hero: React.FC<HeroProps> = ({
   isGiraffeWinking = false,
   onNavigate,
   onInsertCoin
 }) => {
-  const [customPhotoUrl, setCustomPhotoUrl] = useState<string | null>(null);
+  const [customPhotoUrl, setCustomPhotoUrl] = useState<string | null>(DEFAULT_SIMON_PHOTO);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -118,7 +120,7 @@ export const Hero: React.FC<HeroProps> = ({
   };
 
   const handleRemovePhoto = () => {
-    setCustomPhotoUrl(null);
+    setCustomPhotoUrl(DEFAULT_SIMON_PHOTO);
     try {
       localStorage.removeItem('simon_custom_photo');
     } catch {
