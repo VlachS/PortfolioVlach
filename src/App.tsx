@@ -335,9 +335,9 @@ export default function App() {
                   isCrtFlashing ? 'animate-crt-flash' : ''
                 }`}
               >
-                {/* Subtle CRT Scanline Overlay (pointer-events-none so all content is clickable) */}
+                {/* Subtle CRT Scanline Background Layer (behind photos and content so images stay crystal clear) */}
                 <div
-                  className="pointer-events-none absolute inset-0 z-30 crt-scanlines"
+                  className="pointer-events-none absolute inset-0 z-0 crt-scanlines"
                   aria-hidden="true"
                 />
 
